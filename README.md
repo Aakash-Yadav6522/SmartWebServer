@@ -48,7 +48,7 @@ request.setKeyValue("error","Invalid choice,City is not selcted");
 request.forward("errorPage");
 }
 }
-void createErrorPage(Request &request,Response &response)
+void createErrorPage(Request &request,Response &response)  
 {
 string errorMessage=request.getValue("error");
 response.write("<!DOCTYPE HTML>");
