@@ -7,14 +7,14 @@
 * Content Serving.
 * Request Handling.
 # Test Case
-#include<tmwp>
-#include<iostream>
-#include<stdlib.h>
-#include<ctime>
-using namespace std;
-using namespace tmwp;
-void dispatchTime(Request &request,Response &response)
-{
+#include<tmwp>  
+#include<iostream>  
+#include<stdlib.h>  
+#include<ctime>  
+using namespace std;  
+using namespace tmwp;  
+void dispatchTime(Request &request,Response &response)  
+{  
 time_t t=time(0);
 char *now=ctime(&t);
 response.write("<!DOCTYPE HTML>");
