@@ -1,96 +1,74 @@
 # SmartWebServer
-* An HTTP web server is a software application that handles HTTP (Hypertext Transfer Protocol) requests and responses. It serves web content to clients, typically web browsers, upon their request. When a user enters a URL in their web browser or clicks on a link, the browser sends an HTTP request to the web server, and the server responds by sending the requested content back to the client.These servers play a vital role in hosting websites, serving web content, and facilitating communication between clients and servers on the World Wide Web.
+* An HTTP web server is a software application that handles HTTP (Hypertext Transfer Protocol) requests and responses. It serves web content to clients, typically web browsers, upon their request. When a user enters a URL in their web browser or clicks on a link, the browser sends an HTTP request to the web server, and the server responds by sending the requested content back to the client.The backbone of talented web server is socket programming/network programming available in built-in libraries such as arpa/inet.h & sys/socket.h.
 # Features
 * HTTP/1.1(Version 1.1) support.
-* Supports GET type Request.
-* Listrning and Accepting Connection.
-* Content Serving.
-* Request Handling.
+* Supports GET/POST type Request.
+* Supports static & dynamic mime type adding for any file format.
+* Built-in encoding/decoding.
+* Parser for Query strings in requests.
 # Test Case
 * Reference : /appOne 
 ```
 //Bobby [The user]  
 //Assume that the below code is being written by the server user
-#include<tmwp>
-#include<iostream>
-#include<stdlib.h>
-#include<ctime> //appOne folder will contain all the necessary files to be used
-using namespace std;
-using namespace tmwp;
-void dispatchTime(Request &request,Response &response)
-{
-time_t t=time(0);
-char *now=ctime(&t);
-response.write("<!DOCTYPE HTML>");
-response.write("<html lang='en'>");
-response.write("<head>");
-response.write("<meta charset='utf-8'>");  
-response.write("<title>The Clock</title>");
-response.write("</head>");
-response.write("<body>");
-response.write("<h1>");
-response.write(now);
-response.write("</h1>");
-response.write("<a href='now'>Refresh</a><br>");
-response.write("<a href='index.html'>Home</a><br>");
-response.write("</body>");
-response.write("</html>");
-response.close();
-}
-void getCityView(Request &request,Response &response)
-{
-cout<<"getCityView is being process"<<endl;
-string cityCodeString=request.get("cityCode");
-cout<<"("<<cityCodeString<<")"<<endl;
-int cityCode=atoi(cityCodeString.c_str());
-if(cityCode==1) request.forward("Ujjain.html");
-else if(cityCode==2) request.forward("Indore.html");  
-else if(cityCode==3) request.forward("Dewas.html");
-else
-{
-request.setKeyValue("error","Invalid choice,City is not selcted");
-request.forward("errorPage");
-}
-}
-void createErrorPage(Request &request,Response &response)  
-{
-string errorMessage=request.getValue("error");
-response.write("<!DOCTYPE HTML>");
-response.write("<html lang='en'>");
-response.write("<head>");
-response.write("<meta charset='utf-8'>");
-response.write("<title>The Clock</title>");
-response.write("</head>");
-response.write("<body>");
-response.write("<h1>");
-response.write(errorMessage);
-response.write("</h1>");
-response.write("<a href='index.html'>Home</a><br>");
-response.write("</body>");
-response.write("</html>");
-response.close();
-}
-void saveEnquiry(Request &request,Response &response)
-{
-string n=request.get("nm");
-string c=request.get("ct");
-string a=request.get("ad");
-string m=request.get("msg");
-cout<<"Request Received:"<<endl;
-cout<<"Name: "<<n<<endl;
-cout<<"City: "<<c<<endl;
-cout<<"Address: "<<a<<endl;
-cout<<"Query: "<<m<<endl;
-//some logic to save data someWhere (maybe a file or some database)
-request.forward("saveNotification.html");
-}
 int main()
 {
-TMWebProjector server(8080);
-server.onRequest("/now",dispatchTime);
-server.onRequest("/addEnquiry",saveEnquiry);
-server.onRequest("/getCity",getCityView);
-server.onRequest("/errorPage",createErrorPage);
-server.start();
+try
+{
+Bro bro;    //Creating Object of bro class
+bro.setStaticResourcesFolder("whatever"); //whatever folder will containt all necessary files to be used
+bro.get("/save_test1_data",[](Request &request,Response &response) void {
+const char *html=R""""(
+<!DOCTYPE HTML>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<title>Bro Test Cases</title>
+</head>
+<body>
+<h1>Test Case 1-GET with Query string</h1>
+<h3>Response From Server side</h3>
+<b>Data Saved</b>
+<br/><br/>
+<a href='/index.html'>Home</a>
+</body>
+</html>
+)"""";
+response.setContentType("text/html");
+response<<html;
+});
+bro.post("/save_test2_data",[](Request &request,Response &response) void {
+const char *html=R""""(
+<!DOCTYPE HTML>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<title>Bro Test Cases</title>
+</head>
+<body>
+<h1>Test Case 2-POST with Form Data</h1>
+<h3>Response From Server side</h3>
+<b>Data Saved</b>
+<br/><br/>
+<a href='/index.html'>Home</a>
+</body>
+</html>
+)"""";
+response.setContentType("text/html");
+response<<html;
+});
+bro.listen(6060,[](Error & error)void {
+if(error.hasError())
+{
+cout<<"error.getError()";
+return;
+}
+cout<<"Bro HTTP server is ready to accept request on port no. 6060"<<endl;
+});
+}catch(string exception)
+{
+//In case if something is not going as per the rule
+cout<<exception<<endl;
+}
 return 0;
 }
